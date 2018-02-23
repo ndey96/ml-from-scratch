@@ -28,7 +28,5 @@ def load_svm(f):
 
     return (data, indices, labels)
 
-f = open('a1a.txt', 'r')
+f = open('sample_libsvm.txt', 'r')
 data, indices, labels = load_svm(f)
-print len(indices)
-print len(data)
