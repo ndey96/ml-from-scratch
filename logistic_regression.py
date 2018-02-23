@@ -28,17 +28,31 @@ def normalize_x(x):
 def normalize(a):
     return (a-min(a))/float(max(a)-min(a))
 
-def gradient_descent(x, y, alpha=1e-2, max_mistakes=1):
+def gradient_descent(x, y, mode='batch', alpha=1e-2, max_mistakes=1):
     q = float(len(x))
     w = np.random.randn(2)
     x_norm = normalize_x(x)
     y_norm = normalize(y)
-    while num_mistakes(x_norm, y_norm, w) > max_mistakes:
-        diff = y_norm - y_hat(x_norm, w)
-        w[0] = w[0] + (alpha/q)*np.sum(x_norm[:,0]*diff)
-        w[1] = w[1] + (alpha/q)*np.sum(x_norm[:,1]*diff)
-    print("Final w: {}".format(w))
+    if mode == 'batch':
+        while num_mistakes(x_norm, y_norm, w) > max_mistakes:
+            diff = y_norm - y_hat(x_norm, w)
+            w[0] = w[0] + (alpha/q)*np.sum(x_norm[:,0]*diff)
+            w[1] = w[1] + (alpha/q)*np.sum(x_norm[:,1]*diff)
+    if mode == 'stochastic':
+        m = len(x)
+        while num_mistakes(x_norm, y_norm, w) > max_mistakes:
+            diff = y_norm - y_hat(x_norm, w)
+            idx = np.random.randint(m)
+            w[0] = w[0] + (alpha/q)*np.sum(x_norm[idx,0]*diff[idx])
+            w[1] = w[1] + alpha*x_norm[idx,1]*diff[idx]
+    print("Final weight vector: {}".format(w))
     print('Number of misclassified examples: {}'.format(num_mistakes(x_norm, y_norm, w)))
     return w
 
-gradient_descent(x, y)
+print('x = [# characters, # A]')
+print('y = [french=1, english=0]\n')
+print('x = {}'.format(x))
+print('y = {}\n'.format(y))
+
+print('Performing logistic regression...')
+gradient_descent(x, y, mode='stochastic')
